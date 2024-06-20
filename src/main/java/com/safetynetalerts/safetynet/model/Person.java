@@ -1,5 +1,8 @@
 package com.safetynetalerts.safetynet.model;
 
+import lombok.Data;
+
+@Data
 public class Person {
 	
 	private String firstName;
@@ -10,5 +13,4 @@ public class Person {
 	private String phone;
 	private String email;
 	
-	//GETTERS & SETTERS
 }

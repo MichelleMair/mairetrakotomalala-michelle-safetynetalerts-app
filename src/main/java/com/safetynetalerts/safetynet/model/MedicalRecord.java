@@ -2,6 +2,9 @@ package com.safetynetalerts.safetynet.model;
 
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class MedicalRecord {
 	
 	private String firstName;
@@ -10,6 +13,4 @@ public class MedicalRecord {
 	private List<String> medications;
 	private List<String> allergies; 
 	
-	//GETTERS & SETTERS
-
 }

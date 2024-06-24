@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.safetynetalerts.safetynet.model.Person;
+import com.safetynetalerts.safetynet.dto.PersonDTO;
 import com.safetynetalerts.safetynet.service.PersonService;
 
 import lombok.Data;
@@ -27,20 +27,20 @@ public class PersonController {
 	private PersonService personService;
 	
 	@GetMapping
-	public ResponseEntity<List<Person>> getAllPersons() {
-		List<Person> persons = personService.getAllPersons();
+	public ResponseEntity<List<PersonDTO>> getAllPersons() {
+		List<PersonDTO> persons = personService.getAllPersons();
 		return ResponseEntity.ok(persons);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Void> addPerson(@RequestBody Person person) {
-		personService.addPerson(person);
+	public ResponseEntity<Void> addPerson(@RequestBody PersonDTO personDTO) {
+		personService.addPerson(personDTO);
 		return ResponseEntity.ok().build();
 	}
 	
 	@PutMapping
-	public ResponseEntity<Void> updatePerson(@RequestBody Person person) {
-		personService.updatePerson(person);
+	public ResponseEntity<Void> updatePerson(@RequestBody PersonDTO personDTO) {
+		personService.updatePerson(personDTO);
 		return ResponseEntity.ok().build();
 	}
 	

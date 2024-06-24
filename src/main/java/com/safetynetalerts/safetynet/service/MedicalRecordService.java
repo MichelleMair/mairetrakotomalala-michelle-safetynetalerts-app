@@ -2,12 +2,12 @@ package com.safetynetalerts.safetynet.service;
 
 import java.util.List;
 
-import com.safetynetalerts.safetynet.model.MedicalRecord;
+import com.safetynetalerts.safetynet.dto.MedicalRecordDTO;
 
 public interface MedicalRecordService {
 
-	List<MedicalRecord> getAllMedicalRecords();
-	void addMedicalRecord(MedicalRecord medicalrecord);
-	void updatePerson(MedicalRecord medicalrecord);
+	List<MedicalRecordDTO> getAllMedicalRecords();
+	void addMedicalRecord(MedicalRecordDTO medicalrecordDTO);
+	void updatePerson(MedicalRecordDTO medicalrecordDTO);
 	void deleteMedicalRecord(String firstName, String lastName);
 }

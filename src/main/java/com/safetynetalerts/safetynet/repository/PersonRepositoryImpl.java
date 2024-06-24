@@ -48,7 +48,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 			JsonNode personsNode = rootNode.path("persons");
 			persons = objectMapper.readValue(personsNode.toString(), new TypeReference<List<Person>>() {});
 		} catch (IOException e) {
-			log.error("Failed to load data from json file: {}", DATA_FILEPATH, e);
+			log.error("Failed to load person data from json file: {}", DATA_FILEPATH, e);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 			((ObjectNode) rootNode).putPOJO("persons", persons);
 			objectMapper.writeValue(new File(DATA_FILEPATH), rootNode);
 		} catch (IOException e) {
-			log.error("Failed to save data to json file: {}", DATA_FILEPATH, e);
+			log.error("Failed to save person data to json file: {}", DATA_FILEPATH, e);
 		}
 	}
 }

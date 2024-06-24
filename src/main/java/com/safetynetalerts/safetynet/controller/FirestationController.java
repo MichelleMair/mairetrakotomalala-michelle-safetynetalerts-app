@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.safetynetalerts.safetynet.model.Firestation;
+import com.safetynetalerts.safetynet.dto.FirestationDTO;
 import com.safetynetalerts.safetynet.service.FirestationService;
 
 import lombok.Data;
@@ -26,21 +26,21 @@ public class FirestationController {
 	private FirestationService firestationService;
 	
 	@GetMapping
-	public ResponseEntity<List<Firestation>> getAllFirestations() {
-		List<Firestation> firestations = firestationService.getAllFirestations();
+	public ResponseEntity<List<FirestationDTO>> getAllFirestations() {
+		List<FirestationDTO> firestations = firestationService.getAllFirestations();
 		return ResponseEntity.ok(firestations);
 	}
 	
 	
 	@PostMapping
-	public ResponseEntity<Void> addFirestation(@RequestBody Firestation firestation) {
-		firestationService.addFirestation(firestation);
+	public ResponseEntity<Void> addFirestation(@RequestBody FirestationDTO firestationDTO) {
+		firestationService.addFirestation(firestationDTO);
 		return ResponseEntity.ok().build();
 	}
 	
 	@PutMapping
-	public ResponseEntity<Void> updateFirestation (@RequestBody Firestation firestation) {
-		firestationService.updateFirestation(firestation);
+	public ResponseEntity<Void> updateFirestation (@RequestBody FirestationDTO firestationDTO) {
+		firestationService.updateFirestation(firestationDTO);
 		return ResponseEntity.ok().build();
 	}
 	

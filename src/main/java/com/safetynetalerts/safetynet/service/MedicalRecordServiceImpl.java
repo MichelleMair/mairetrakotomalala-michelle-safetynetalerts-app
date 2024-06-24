@@ -1,10 +1,12 @@
 package com.safetynetalerts.safetynet.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.safetynetalerts.safetynet.dto.MedicalRecordDTO;
 import com.safetynetalerts.safetynet.model.MedicalRecord;
 import com.safetynetalerts.safetynet.repository.MedicalRecordRepository;
 
@@ -19,8 +21,10 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	 * @return
 	 */
 	@Override
-	public List<MedicalRecord> getAllMedicalRecords() {
-		return medicalRecordRepository.getAllMedicalRecords();
+	public List<MedicalRecordDTO> getAllMedicalRecords() {
+		return medicalRecordRepository.getAllMedicalRecords().stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -28,10 +32,11 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	 * @param medicalRecord
 	 */
 	@Override
-	public void addMedicalRecord(MedicalRecord medicalrecord) {
-		List<MedicalRecord> medicalrecords = medicalRecordRepository.getAllMedicalRecords();
-		medicalrecords.add(medicalrecord);
-		medicalRecordRepository.saveAllMedicalRecords(medicalrecords);
+	public void addMedicalRecord(MedicalRecordDTO medicalrecordDTO) {
+		MedicalRecord medicalRecord = convertToEntity(medicalrecordDTO);
+		List<MedicalRecord> medicalRecords = medicalRecordRepository.getAllMedicalRecords();
+		medicalRecords.add(medicalRecord);
+		medicalRecordRepository.saveAllMedicalRecords(medicalRecords);
 	}
 	
 	
@@ -40,12 +45,12 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	 * @param medicalrecord
 	 */
 	@Override
-	public void updatePerson(MedicalRecord medicalrecord) {
+	public void updatePerson(MedicalRecordDTO medicalrecordDTO) {
 		List<MedicalRecord> medicalrecords = medicalRecordRepository.getAllMedicalRecords();
-		medicalrecords.removeIf(m ->m.getFirstName().equals(medicalrecord.getFirstName())
-				&& m.getLastName().equals(medicalrecord.getLastName()));
+		medicalrecords.removeIf(m ->m.getFirstName().equals(medicalrecordDTO.getFirstName())
+				&& m.getLastName().equals(medicalrecordDTO.getLastName()));
 		
-		medicalrecords.add(medicalrecord);
+		medicalrecords.add(convertToEntity(medicalrecordDTO));
 		
 		medicalRecordRepository.saveAllMedicalRecords(medicalrecords);
 	}
@@ -62,5 +67,29 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 		medicalrecords.removeIf(m ->m.getFirstName().equals(firstName)
 				&& m.getLastName().equals(lastName));
 		medicalRecordRepository.saveAllMedicalRecords(medicalrecords);
+	}
+	
+	private MedicalRecordDTO convertToDTO(MedicalRecord MedicalRecord) {
+		MedicalRecordDTO dto = new MedicalRecordDTO();
+		
+		dto.setFirstName(MedicalRecord.getFirstName());
+		dto.setLastName(MedicalRecord.getLastName());
+		dto.setBirthdate(MedicalRecord.getBirthdate());
+		dto.setMedications(MedicalRecord.getMedications());
+		dto.setAllergies(MedicalRecord.getAllergies());
+		
+		return dto;
+	}
+	
+	private MedicalRecord convertToEntity(MedicalRecordDTO dto) {
+		MedicalRecord MedicalRecord = new MedicalRecord();
+		
+		MedicalRecord.setFirstName(dto.getFirstName());
+		MedicalRecord.setLastName(dto.getLastName());
+		MedicalRecord.setBirthdate(dto.getBirthdate());
+		MedicalRecord.setMedications(dto.getMedications());
+		MedicalRecord.setAllergies(dto.getAllergies());
+		
+		return MedicalRecord;
 	}
 }

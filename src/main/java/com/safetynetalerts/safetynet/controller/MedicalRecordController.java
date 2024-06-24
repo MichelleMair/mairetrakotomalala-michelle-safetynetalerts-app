@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.safetynetalerts.safetynet.dto.MedicalRecordDTO;
 import com.safetynetalerts.safetynet.model.MedicalRecord;
 import com.safetynetalerts.safetynet.service.MedicalRecordService;
 
@@ -28,20 +29,20 @@ public class MedicalRecordController {
 	private MedicalRecordService medicalRecordService;
 	
 	@GetMapping
-	public ResponseEntity<List<MedicalRecord>> getAllMedicalRecords() {
-		List<MedicalRecord> medicalRecords = medicalRecordService.getAllMedicalRecords();
+	public ResponseEntity<List<MedicalRecordDTO>> getAllMedicalRecords() {
+		List<MedicalRecordDTO> medicalRecords = medicalRecordService.getAllMedicalRecords();
 		return ResponseEntity.ok(medicalRecords);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Void> addMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-		medicalRecordService.addMedicalRecord(medicalRecord);
+	public ResponseEntity<Void> addMedicalRecord(@RequestBody MedicalRecordDTO medicalRecordDTO) {
+		medicalRecordService.addMedicalRecord(medicalRecordDTO);
 		return ResponseEntity.ok().build();
 	}
 	
 	@PutMapping
-	public ResponseEntity<Void> updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-		medicalRecordService.updatePerson(medicalRecord);
+	public ResponseEntity<Void> updateMedicalRecord(@RequestBody MedicalRecordDTO medicalRecordDTO) {
+		medicalRecordService.updatePerson(medicalRecordDTO);
 		return ResponseEntity.ok().build();
 	}
 	

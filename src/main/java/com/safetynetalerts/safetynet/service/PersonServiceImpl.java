@@ -1,10 +1,12 @@
 package com.safetynetalerts.safetynet.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.safetynetalerts.safetynet.dto.PersonDTO;
 import com.safetynetalerts.safetynet.model.Person;
 import com.safetynetalerts.safetynet.repository.PersonRepository;
 
@@ -19,8 +21,10 @@ public class PersonServiceImpl implements PersonService {
 	 * @return
 	 */
 	@Override
-	public List<Person> getAllPersons() {
-		return personRepository.getAllPersons();
+	public List<PersonDTO> getAllPersons() {
+		return personRepository.getAllPersons().stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -28,7 +32,8 @@ public class PersonServiceImpl implements PersonService {
 	 * @param person
 	 */
 	@Override
-	public void addPerson(Person person) {
+	public void addPerson(PersonDTO personDTO) {
+		Person person = convertToEntity(personDTO);
 		List<Person> persons = personRepository.getAllPersons();
 		persons.add(person);
 		personRepository.saveAllPersons(persons);
@@ -40,12 +45,12 @@ public class PersonServiceImpl implements PersonService {
 	 * @param person
 	 */
 	@Override
-	public void updatePerson(Person person) {
+	public void updatePerson(PersonDTO personDTO) {
 		List<Person> persons = personRepository.getAllPersons();
-		persons.removeIf(p ->p.getFirstName().equals(person.getFirstName())
-				&& p.getLastName().equals(person.getLastName()));
+		persons.removeIf(p ->p.getFirstName().equals(personDTO.getFirstName())
+				&& p.getLastName().equals(personDTO.getLastName()));
 		
-		persons.add(person);
+		persons.add(convertToEntity(personDTO));
 		
 		personRepository.saveAllPersons(persons);
 	}
@@ -62,6 +67,34 @@ public class PersonServiceImpl implements PersonService {
 		persons.removeIf(p ->p.getFirstName().equals(firstName)
 				&& p.getLastName().equals(lastName));
 		personRepository.saveAllPersons(persons);
+	}
+	
+	private PersonDTO convertToDTO(Person person) {
+		PersonDTO dto = new PersonDTO();
+		
+		dto.setFirstName(person.getFirstName());
+		dto.setLastName(person.getLastName());
+		dto.setAddress(person.getAddress());
+		dto.setCity(person.getCity());
+		dto.setZip(person.getZip());
+		dto.setPhone(person.getPhone());
+		dto.setEmail(person.getEmail());
+		
+		return dto;
+	}
+	
+	private Person convertToEntity(PersonDTO dto) {
+		Person person = new Person();
+		
+		person.setFirstName(dto.getFirstName());
+		person.setLastName(dto.getLastName());
+		person.setAddress(dto.getAddress());
+		person.setCity(dto.getCity());
+		person.setZip(dto.getZip());
+		person.setPhone(dto.getPhone());
+		person.setEmail(dto.getEmail());
+		
+		return person;
 	}
 	
 }

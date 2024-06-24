@@ -1,5 +1,7 @@
 package com.safetynetalerts.safetynet.model;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data

@@ -28,7 +28,9 @@ public class ChildAlertServiceImpl implements ChildAlertService {
 	@Override
 	public List<ChildAlertDTO> getChildrenByAdress(String address) {
 		
-		List<Person> personsAtSameAddress = personRepository.getAllPersons().stream().filter(person -> person.getAddress().equals(address)).collect(Collectors.toList());
+		List<Person> personsAtSameAddress = personRepository.getAllPersons().stream()
+				.filter(person -> person.getAddress().equals(address))
+				.collect(Collectors.toList());
 		
 		List<ChildAlertDTO> children = personsAtSameAddress.stream().map(person -> {
 			MedicalRecord medicalRecord = medicalRecordRepository.getMedicalRecord(person.getFirstName(), person.getLastName());

@@ -2,6 +2,7 @@ package com.safetynetalerts.safetynet.service;
 
 import java.util.List;
 
+import com.safetynetalerts.safetynet.dto.FirestationCoverageDTO;
 import com.safetynetalerts.safetynet.dto.FirestationDTO;
 
 public interface FirestationService {
@@ -10,4 +11,6 @@ public interface FirestationService {
 	void addFirestation (FirestationDTO firestationDTO);
 	void updateFirestation(FirestationDTO firestationDTO);
 	void deleteFirestation(String address);
+	
+	FirestationCoverageDTO getCoverageByStationNumber(int stationNumber);
 }

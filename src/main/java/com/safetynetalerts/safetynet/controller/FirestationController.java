@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.safetynetalerts.safetynet.dto.FirestationCoverageDTO;
 import com.safetynetalerts.safetynet.dto.FirestationDTO;
 import com.safetynetalerts.safetynet.service.FirestationService;
 
@@ -29,6 +31,12 @@ public class FirestationController {
 	public ResponseEntity<List<FirestationDTO>> getAllFirestations() {
 		List<FirestationDTO> firestations = firestationService.getAllFirestations();
 		return ResponseEntity.ok(firestations);
+	}
+	
+	@GetMapping(params = "stationNumber")
+	public ResponseEntity<FirestationCoverageDTO> getCoverageByStationNumber(@RequestParam("stationNumber") int stationNumber) {
+		FirestationCoverageDTO coverage = firestationService.getCoverageByStationNumber(stationNumber);
+		return ResponseEntity.ok(coverage);
 	}
 	
 	

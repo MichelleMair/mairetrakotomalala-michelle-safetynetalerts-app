@@ -2,6 +2,7 @@ package com.safetynetalerts.safetynet.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -59,5 +60,14 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
 		} catch (IOException e) {
 			log.error("Failed to save medical records to json file: {}", DATA_FILEPATH, e);
 		}
+	}
+
+
+	@Override
+	public MedicalRecord getMedicalRecord(String firstname, String lastName) {
+		Optional<MedicalRecord> medicalRecord = medicalrecords.stream()
+				.filter(rec -> rec.getFirstName().equalsIgnoreCase(firstname) && rec.getLastName().equalsIgnoreCase(lastName))
+				.findFirst();
+		return medicalRecord.orElse(null);
 	}
 }

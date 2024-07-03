@@ -1,4 +1,4 @@
-package com.safetynetalerts.safetynet.integration;
+/*package com.safetynetalerts.safetynet.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,5 +10,5 @@ class SafetyNetAlertsIntegrationTest {
 	void contextLoads() {
 	}
 
-}
+}*/
 

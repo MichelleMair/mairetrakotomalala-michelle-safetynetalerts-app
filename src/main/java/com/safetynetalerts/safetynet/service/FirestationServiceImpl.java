@@ -115,8 +115,9 @@ public class FirestationServiceImpl implements FirestationService {
 		List<Firestation> listOfFirestations = firestationRepository.getAllFirestations();
 		logger.debug("Retrieved {} firestations from repository.", listOfFirestations.size());
 		
+		String stationNumberStr = String.valueOf(stationNumber);
 		List <String> coveredAddresses = listOfFirestations.stream()
-				.filter(fs -> fs.getStation().equals(String.valueOf(stationNumber)))
+				.filter(fs -> fs.getStation().equals(stationNumberStr))
 				.map(Firestation::getAddress).collect(Collectors.toList());
 		logger.debug("Found {} adresses covred by the station number {}", coveredAddresses.size(), stationNumber);
 		

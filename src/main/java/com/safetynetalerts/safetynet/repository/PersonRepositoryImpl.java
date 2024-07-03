@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.safetynetalerts.safetynet.model.Person;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 
 /**
@@ -23,10 +23,10 @@ import java.io.File;
  * object
  */
 
-@Slf4j
 @Repository
 public class PersonRepositoryImpl implements PersonRepository {
 
+	private static final Logger logger= LogManager.getLogger(PersonRepositoryImpl.class);
 	
 	// Path for JSON file
 	private static final String DATA_FILEPATH = "src/main/resources/data.json";
@@ -48,7 +48,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 			JsonNode personsNode = rootNode.path("persons");
 			persons = objectMapper.readValue(personsNode.toString(), new TypeReference<List<Person>>() {});
 		} catch (IOException e) {
-			log.error("Failed to load person data from json file: {}", DATA_FILEPATH, e);
+			logger.error("Failed to load person data from json file: {}", DATA_FILEPATH, e);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 			((ObjectNode) rootNode).putPOJO("persons", persons);
 			objectMapper.writeValue(new File(DATA_FILEPATH), rootNode);
 		} catch (IOException e) {
-			log.error("Failed to save person data to json file: {}", DATA_FILEPATH, e);
+			logger.error("Failed to save person data to json file: {}", DATA_FILEPATH, e);
 		}
 	}
 }

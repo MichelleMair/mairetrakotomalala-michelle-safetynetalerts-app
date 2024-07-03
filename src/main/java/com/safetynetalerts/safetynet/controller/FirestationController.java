@@ -2,6 +2,8 @@ package com.safetynetalerts.safetynet.controller;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,38 +25,105 @@ import lombok.Data;
 @RestController
 @RequestMapping("/firestation")
 public class FirestationController {
+	
+	private static final Logger logger = LogManager.getLogger(FirestationController.class);
 
 	@Autowired
 	private FirestationService firestationService;
 	
+	/**
+	 * Metho GET
+	 * @return Status ok (200) if no exception (fetching all firestations)
+	 */
 	@GetMapping
 	public ResponseEntity<List<FirestationDTO>> getAllFirestations() {
-		List<FirestationDTO> firestations = firestationService.getAllFirestations();
-		return ResponseEntity.ok(firestations);
+		logger.debug("Fetching all firestations.");
+		
+		try {
+			List<FirestationDTO> firestations = firestationService.getAllFirestations();
+			logger.info("Fetched all firestations successfully. Number of firestations: {} ", firestations.size());
+			return ResponseEntity.ok(firestations);
+		} catch (Exception e) {
+			logger.error("Error fetching all firestations: ", e);
+			return ResponseEntity.status(500).build();
+		}
 	}
 	
+	/**
+	 * @param stationNumber
+	 * @return a list of persons covered by the corresponding firestation
+	 * if status ok 		
+	 */
 	@GetMapping(params = "stationNumber")
 	public ResponseEntity<FirestationCoverageDTO> getCoverageByStationNumber(@RequestParam("stationNumber") int stationNumber) {
-		FirestationCoverageDTO coverage = firestationService.getCoverageByStationNumber(stationNumber);
-		return ResponseEntity.ok(coverage);
+		logger.debug("Getting a list of persons covered by the corresponding firestation.");
+		
+		try {
+			FirestationCoverageDTO coverage = firestationService.getCoverageByStationNumber(stationNumber);
+			logger.info("Getting a list of persons covered by the corresponding firestation , successfully.");
+			return ResponseEntity.ok(coverage);
+		} catch (Exception e) {
+			logger.error("Error fetching the list: ", e);
+			return ResponseEntity.status(500).build();
+		}
 	}
 	
 	
+	/**
+	 * @param firestationDTO
+	 * @return if status ok, adding a firestation
+	 */
 	@PostMapping
 	public ResponseEntity<Void> addFirestation(@RequestBody FirestationDTO firestationDTO) {
-		firestationService.addFirestation(firestationDTO);
-		return ResponseEntity.ok().build();
+		logger.debug("Adding a firestation: {}", firestationDTO);
+		
+		try {
+			firestationService.addFirestation(firestationDTO);
+			logger.info("Added firestation successfully: {}", firestationDTO);
+			return ResponseEntity.ok().build();
+			
+		} catch (Exception e) {
+			logger.error("Error adding a firestation: ", firestationDTO, e);
+			return ResponseEntity.status(500).build();
+		}
 	}
 	
+	
+	/**
+	 * @param firestationDTO
+	 * @return if status ok, update a firestation
+	 */
 	@PutMapping
 	public ResponseEntity<Void> updateFirestation (@RequestBody FirestationDTO firestationDTO) {
-		firestationService.updateFirestation(firestationDTO);
-		return ResponseEntity.ok().build();
+		logger.debug("Updating a firestation: {}", firestationDTO);
+		
+		try {
+			firestationService.updateFirestation(firestationDTO);
+			logger.info("Updated firestation successfully: {}", firestationDTO);
+			return ResponseEntity.ok().build();
+			
+		} catch (Exception e) {
+			logger.error("Error updating firestation: ", firestationDTO ,e);
+			return ResponseEntity.status(500).build();
+		}
 	}
 	
+	/**
+	 * @param address
+	 * @return if status ok, deleted a firestation successfully
+	 */
 	@DeleteMapping
 	public ResponseEntity<Void> deleteFirestation(@RequestBody String address) {
-		firestationService.deleteFirestation(address);
-		return ResponseEntity.ok().build();
+		logger.debug("Deleting a firestation: {}", address);
+		
+		try {
+			firestationService.deleteFirestation(address);
+			logger.info("Deleted firestation: {}", address);
+			return ResponseEntity.ok().build();
+			
+		} catch (Exception e) {
+			logger.error("Deleted firestation successfully with address: {}", address);
+			return ResponseEntity.ok().build();
+		}
 	}
 }

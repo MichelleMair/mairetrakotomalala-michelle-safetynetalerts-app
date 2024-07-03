@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,14 +14,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.safetynetalerts.safetynet.model.MedicalRecord;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.IOException;
 
-@Slf4j
 @Repository
 public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
+	
+	private static final Logger logger= LogManager.getLogger(MedicalRecordRepositoryImpl.class);
 
 	// Path for JSON file
 	private static final String DATA_FILEPATH = "src/main/resources/data.json";
@@ -41,7 +42,7 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
 			JsonNode medicalRecordsNode = rootNode.path("medicalrecords");
 			medicalrecords = objectMapper.readValue(medicalRecordsNode.toString(), new TypeReference<List<MedicalRecord>>() {});
 		} catch (IOException e) {
-			log.error("Failed to load medical record from json file: {}", DATA_FILEPATH, e);
+			logger.error("Failed to load medical record from json file: {}", DATA_FILEPATH, e);
 		}
 	}
 
@@ -58,7 +59,7 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
 			((ObjectNode) rootNode).putPOJO("medicalrecords", medicalrecords);
 			objectMapper.writeValue(new File(DATA_FILEPATH), rootNode);
 		} catch (IOException e) {
-			log.error("Failed to save medical records to json file: {}", DATA_FILEPATH, e);
+			logger.error("Failed to save medical records to json file: {}", DATA_FILEPATH, e);
 		}
 	}
 

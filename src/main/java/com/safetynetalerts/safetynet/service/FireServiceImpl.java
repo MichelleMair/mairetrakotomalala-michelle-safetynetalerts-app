@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import com.safetynetalerts.safetynet.repository.PersonRepository;
 
 @Service
 public class FireServiceImpl implements FireService {
+	
+	private static final Logger logger= LogManager.getLogger(FireServiceImpl.class);
 	
 	@Autowired
 	private PersonRepository personRepository;

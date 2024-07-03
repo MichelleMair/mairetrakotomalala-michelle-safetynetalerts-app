@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import com.safetynetalerts.safetynet.repository.PersonRepository;
 
 @Service
 public class FirestationServiceImpl implements FirestationService {
+	
+	private static final Logger logger= LogManager.getLogger(FirestationServiceImpl.class);
 
 	@Autowired
 	private FirestationRepository firestationRepository;
@@ -33,69 +37,121 @@ public class FirestationServiceImpl implements FirestationService {
 	@Autowired
 	private MedicalRecordRepository medicalRecordRepository;
 	
+	/**
+	 *GET all firestations
+	 */
 	@Override
 	public List<FirestationDTO> getAllFirestations() {
-		return firestationRepository.getAllFirestations().stream()
+		logger.debug("Fetching all firestations from repository");
+		
+		List<Firestation> firestations = firestationRepository.getAllFirestations();
+		
+		logger.debug("Converting firestations to DTOs.");
+		return firestations.stream()
 				.map(this::convertToDTO)
 				.collect(Collectors.toList());
 	}
 	
+	
+	/**
+	 * ADD firestation
+	 */
 	@Override
 	public void addFirestation (FirestationDTO firestationDTO) {
 		Firestation firestation = convertToEntity(firestationDTO);
+		logger.debug("Adding firestation to repository. ", firestation);
+		
 		List<Firestation> firestations = firestationRepository.getAllFirestations();
 		firestations.add(firestation);
 		firestationRepository.saveAllFirestations(firestations);
+		
+		logger.debug("Firestation added successfully: {} ", firestation);
 	}
 	
+	/**
+	 *UPDATED a firestation
+	 */
 	@Override
 	public void updateFirestation(FirestationDTO firestationDTO) {
 		List<Firestation> firestations = firestationRepository.getAllFirestations();
+		logger.debug("Updating firestation in repository: {}", firestationDTO);
+		
 		Optional<Firestation> existingFirestation = firestations.stream()
 				.filter(fs -> fs.getAddress().equals(firestationDTO.getAddress())).findFirst();
 		
 		existingFirestation.ifPresent(fs -> fs.setStation(firestationDTO.getStation()));
 		
 		firestationRepository.saveAllFirestations(firestations);
+		
+		logger.debug("Firestation updated successfully: {}", firestationDTO);
 	}
 	
+	
+	/**
+	 * DELETED a firestation
+	 */
 	@Override
 	public void deleteFirestation(String address) {
 		List<Firestation> firestations = firestationRepository.getAllFirestations();
+		logger.debug("Deleting a firestation with address: {}", address);
+		
 		firestations.removeIf(fs -> fs.getAddress().equals(address));
 		firestationRepository.saveAllFirestations(firestations);
+		
+		logger.debug("Deleted a firestation with address: {}", address);		
 	}
 	
 
+	/**
+	 * getting a list of persons covered by the corresponding firestation
+	 */
 	@Override
 	public FirestationCoverageDTO getCoverageByStationNumber(int stationNumber) {
+		logger.debug("Getting the coverage with station number: {}", stationNumber);
+		
 		List<Person> listOfPersons = personRepository.getAllPersons();
+		logger.debug("Retrieved {} persons from repository.", listOfPersons.size());
+		
 		List<Firestation> listOfFirestations = firestationRepository.getAllFirestations();
+		logger.debug("Retrieved {} firestations from repository.", listOfFirestations.size());
 		
 		List <String> coveredAddresses = listOfFirestations.stream()
 				.filter(fs -> fs.getStation().equals(String.valueOf(stationNumber)))
 				.map(Firestation::getAddress).collect(Collectors.toList());
+		logger.debug("Found {} adresses covred by the station number {}", coveredAddresses.size(), stationNumber);
 		
 		List<Person> coveredPersons = listOfPersons.stream()
 				.filter(person -> coveredAddresses
 				.contains(person.getAddress()))
 				.collect(Collectors.toList());
+		logger.debug("Found {} persons covered by the station number {}", coveredPersons.size(), stationNumber);
 		
 		List<FirestationPersonDTO> personCoverageDTOs = coveredPersons.stream()
 				.map(this::convertToFirestationPersonDTO)
 				.collect(Collectors.toList());
+		logger.debug("Converted covered persons to DTOs.");
 		
 		long childrenCount = coveredPersons.stream()
 				.filter(person -> {
                     MedicalRecord medicalRecord = medicalRecordRepository.getMedicalRecord(person.getFirstName(), person.getLastName());
-                    return medicalRecord != null && getAge(medicalRecord.getBirthdate()) <= 18;
+                    if(medicalRecord == null) {
+                    	logger.debug("No medical record found for person: {} {}", person.getFirstName(), person.getLastName());
+                    	return false;
+                    }
+                    int age = getAge(medicalRecord.getBirthdate());
+                    logger.debug("Person: {} {} is {} years old", person.getFirstName(), person.getLastName(), age);
+                    
+                    return age <= 18;
                 })
 				.count();
+		logger.debug("Found {} children covered by station number {}", childrenCount, stationNumber);
 		
 		FirestationCoverageDTO coverageDTO = new FirestationCoverageDTO();
 		coverageDTO.setPersons(personCoverageDTOs);
 		coverageDTO.setNumberOfAdults(coveredPersons.size() - (int) childrenCount);
 		coverageDTO.setNumberOfChildren((int)childrenCount);
+		
+		logger.debug("Returning coverageDTO: {}", coverageDTO);
 		
 		return coverageDTO;
 	}

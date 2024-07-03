@@ -3,6 +3,8 @@ package com.safetynetalerts.safetynet.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import com.safetynetalerts.safetynet.repository.MedicalRecordRepository;
 @Service
 public class MedicalRecordServiceImpl implements MedicalRecordService {
 	
+	private static final Logger logger= LogManager.getLogger(MedicalRecordServiceImpl.class);
+	
 	@Autowired
 	private MedicalRecordRepository medicalRecordRepository;
 	
@@ -22,7 +26,11 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	 */
 	@Override
 	public List<MedicalRecordDTO> getAllMedicalRecords() {
-		return medicalRecordRepository.getAllMedicalRecords().stream()
+		logger.debug("Fetching all medical records from repository. ");
+		
+		List<MedicalRecord> medicalRecords = medicalRecordRepository.getAllMedicalRecords();
+		logger.debug("Converting medicalRecords to DTOs.");
+		return medicalRecords.stream()
 				.map(this::convertToDTO)
 				.collect(Collectors.toList());
 	}
@@ -34,9 +42,14 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	@Override
 	public void addMedicalRecord(MedicalRecordDTO medicalrecordDTO) {
 		MedicalRecord medicalRecord = convertToEntity(medicalrecordDTO);
+		
+		logger.debug("Adding medical record to repository. ", medicalRecord);
+		
 		List<MedicalRecord> medicalRecords = medicalRecordRepository.getAllMedicalRecords();
 		medicalRecords.add(medicalRecord);
 		medicalRecordRepository.saveAllMedicalRecords(medicalRecords);
+		
+		logger.debug("Medical record added successfully: {} ", medicalRecord);
 	}
 	
 	
@@ -47,12 +60,17 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	@Override
 	public void updatePerson(MedicalRecordDTO medicalrecordDTO) {
 		List<MedicalRecord> medicalrecords = medicalRecordRepository.getAllMedicalRecords();
+		
+		logger.debug("Updating medical record in repository: {}", medicalrecordDTO);
+		
 		medicalrecords.removeIf(m ->m.getFirstName().equals(medicalrecordDTO.getFirstName())
 				&& m.getLastName().equals(medicalrecordDTO.getLastName()));
 		
 		medicalrecords.add(convertToEntity(medicalrecordDTO));
 		
 		medicalRecordRepository.saveAllMedicalRecords(medicalrecords);
+		
+		logger.debug("Medical record updated successfully: {} ", medicalrecordDTO);
 	}
 	
 	
@@ -63,10 +81,14 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	 */
 	@Override
 	public void deleteMedicalRecord(String firstName, String lastName) {
-	List<MedicalRecord> medicalrecords = medicalRecordRepository.getAllMedicalRecords();
+		List<MedicalRecord> medicalrecords = medicalRecordRepository.getAllMedicalRecords();
+	
+		logger.debug("Deleting medical records from repository with firstName: {} and lastName: {}", firstName, lastName);
+	
 		medicalrecords.removeIf(m ->m.getFirstName().equals(firstName)
 				&& m.getLastName().equals(lastName));
 		medicalRecordRepository.saveAllMedicalRecords(medicalrecords);
+		logger.debug("Medical record deleted successfully with firstName: {} and lastName: {}", firstName, lastName);
 	}
 	
 	private MedicalRecordDTO convertToDTO(MedicalRecord MedicalRecord) {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,13 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.safetynetalerts.safetynet.model.Firestation;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 
-@Slf4j
 @Repository
 public class FirestationRepositoryImpl implements FirestationRepository {
+	
+	private static final Logger logger= LogManager.getLogger(FirestationRepositoryImpl.class);
 
 	// Path for JSON file
 	private static final String DATA_FILEPATH = "src/main/resources/data.json";
@@ -37,7 +38,7 @@ public class FirestationRepositoryImpl implements FirestationRepository {
 			firestations = objectMapper.readValue(firestationsNode.toString(), 
 					new TypeReference<List<Firestation>>() {});
 		} catch (IOException e) {
-			log.error("Failed to load firstations from json file: {}", DATA_FILEPATH, e);
+			logger.error("Failed to load firstations from json file: {}", DATA_FILEPATH, e);
 		}
 		
 	}
@@ -55,7 +56,7 @@ public class FirestationRepositoryImpl implements FirestationRepository {
 			((ObjectNode) rootNode).putPOJO("firestations", firestations);
 			objectMapper.writeValue(new File(DATA_FILEPATH), rootNode);
 		} catch (IOException e) {
-			log.error("Failed to save firestations data to json file: {}", DATA_FILEPATH, e);
+			logger.error("Failed to save firestations data to json file: {}", DATA_FILEPATH, e);
 		}
 	}
 }

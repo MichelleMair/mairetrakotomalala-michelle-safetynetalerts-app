@@ -1,13 +1,14 @@
-package com.safetynetalerts.safetynet.test;
+package com.safetynetalerts.safetynet.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SafetyNetAlertsApplicationTests {
+class SafetyNetAlertsIntegrationTest {
 
 	@Test
 	void contextLoads() {
 	}
 
 }
+

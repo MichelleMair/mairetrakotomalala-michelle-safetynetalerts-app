@@ -2,9 +2,13 @@ package com.safetynetalerts.safetynet.dto;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MedicalRecordDTO {
 
 	private String firstName;

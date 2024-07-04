@@ -1,6 +1,8 @@
 package com.safetynetalerts.safetynet.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -78,6 +81,25 @@ public class PersonServiceTest {
 	}
 	
 	@Test
+	public void testAddPersonWithEmptyFields() {
+		//ARRANGE
+		PersonDTO personDTO = new PersonDTO ();
+		
+		personDTO.setFirstName("");
+		personDTO.setLastName("");
+		personDTO.setAddress("");
+		personDTO.setCity("");
+		personDTO.setZip("");
+		personDTO.setPhone("");
+		personDTO.setEmail("");
+		
+		//ACT & ASSERT (assertThrows)
+		assertThrows(IllegalArgumentException.class, () -> {
+			personService.addPerson(personDTO);
+		});
+	}
+	
+	@Test
 	public void testUpdatePerson() {
 		//ARRANGE
 		PersonDTO personDTO = new PersonDTO();
@@ -103,6 +125,29 @@ public class PersonServiceTest {
 	}
 	
 	@Test
+	public void testUpdateNonExistingPerson() {
+		//ARRANGE
+		PersonDTO personDTO = new PersonDTO();
+		
+		personDTO.setFirstName("Elizabeth");
+		personDTO.setLastName("Olsen");
+		personDTO.setAddress("1234 Olsencity Sl");
+		personDTO.setCity("Culver");
+		personDTO.setZip("97451");
+		personDTO.setPhone("123-456-7890");
+		personDTO.setEmail("elinonexistentperson@email.com");
+		
+		when(personRepository.getAllPersons()).thenReturn(new ArrayList<>());
+		
+		//ACT
+		personService.updatePerson(personDTO);
+		
+		//ASSERT
+		verify(personRepository, never()).saveAllPersons(anyList());
+	}
+	
+	
+	@Test
 	public void testDeletePerson() {
 		//ARRANGE
 		String firstName= "John";
@@ -115,10 +160,32 @@ public class PersonServiceTest {
 		when(personRepository.getAllPersons()).thenReturn(persons);
 		
 		//ACT
-		personService.deletePerson(firstName, firstName);
+		personService.deletePerson(firstName, lastName);
 		
 		//ASSERT
-		verify(personRepository, times(1)).saveAllPersons(anyList());
+		ArgumentCaptor<List<Person>> captor = ArgumentCaptor.forClass(List.class);
+		verify(personRepository, times(1)).saveAllPersons(captor.capture());
+		
+		//Cheking if the person was delete successfully,implies that the other one is updated in json file
+		List<Person> updatedPersons = captor.getValue();
+		assertEquals(1, updatedPersons.size());
+		assertEquals("Jane", updatedPersons.get(0).getFirstName());
+		assertEquals("Doe", updatedPersons.get(0).getLastName());
+	}
+	
+	@Test
+	public void testDeleteNonExistingPerson() {
+		//ARRANGE
+		String firstName = "Elizabeth";
+		String lastName = "Olsen";
+		
+		when(personRepository.getAllPersons()).thenReturn(new ArrayList<>());
+		
+		//ACT
+		personService.deletePerson(firstName, lastName);
+		
+		//ASSERT
+		verify(personRepository, never()).saveAllPersons(anyList());
 	}
 	
 }

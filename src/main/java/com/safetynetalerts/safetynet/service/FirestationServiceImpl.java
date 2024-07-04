@@ -79,11 +79,17 @@ public class FirestationServiceImpl implements FirestationService {
 		Optional<Firestation> existingFirestation = firestations.stream()
 				.filter(fs -> fs.getAddress().equals(firestationDTO.getAddress())).findFirst();
 		
-		existingFirestation.ifPresent(fs -> fs.setStation(firestationDTO.getStation()));
+		if(existingFirestation.isPresent()) {
+			
+			existingFirestation.get().setStation(firestationDTO.getStation());
+			
+			firestationRepository.saveAllFirestations(firestations);
+			logger.debug("Firestation updated successfully: {}", firestationDTO);
+			
+		} else {
+			logger.warn("Firestation not found with address: {}", firestationDTO.getAddress());
+		}
 		
-		firestationRepository.saveAllFirestations(firestations);
-		
-		logger.debug("Firestation updated successfully: {}", firestationDTO);
 	}
 	
 	
@@ -95,10 +101,14 @@ public class FirestationServiceImpl implements FirestationService {
 		List<Firestation> firestations = firestationRepository.getAllFirestations();
 		logger.debug("Deleting a firestation with address: {}", address);
 		
-		firestations.removeIf(fs -> fs.getAddress().equals(address));
-		firestationRepository.saveAllFirestations(firestations);
+		boolean removed = firestations.removeIf(fs -> fs.getAddress().equals(address));
 		
-		logger.debug("Deleted a firestation with address: {}", address);		
+		if (removed) {
+			firestationRepository.saveAllFirestations(firestations);
+			logger.debug("Deleted a firestation with address: {}", address);
+		} else {
+			logger.warn("No firestation found with address: {}", address);
+		}
 	}
 	
 

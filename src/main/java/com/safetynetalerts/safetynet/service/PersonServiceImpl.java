@@ -1,6 +1,7 @@
 package com.safetynetalerts.safetynet.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +44,17 @@ public class PersonServiceImpl implements PersonService {
 	 */
 	@Override
 	public void addPerson(PersonDTO personDTO) {
+		
+		if(	personDTO.getFirstName() == null || personDTO.getFirstName().isEmpty() ||
+			personDTO.getLastName() == null || personDTO.getLastName().isEmpty() ||
+			personDTO.getAddress() == null || personDTO.getAddress().isEmpty() ||
+			personDTO.getCity() == null || personDTO.getCity().isEmpty() ||
+			personDTO.getPhone() == null || personDTO.getPhone().isEmpty() ||
+			personDTO.getEmail() == null || personDTO.getEmail().isEmpty()) {
+			
+			throw new IllegalArgumentException("All fields must be non-empty.");
+		}
+		
 		Person person = convertToEntity(personDTO);
 		
 		logger.debug("Adding person to repository. ", person);
@@ -65,11 +77,23 @@ public class PersonServiceImpl implements PersonService {
 		
 		logger.debug("Updating person in repository: {}", personDTO);
 		
-		persons.removeIf(p ->p.getFirstName().equals(personDTO.getFirstName())
-				&& p.getLastName().equals(personDTO.getLastName()));
+		//Check if person exist in json file
+		Optional<Person> existingPerson = persons.stream().filter(p 
+				-> p.getFirstName().equals(personDTO.getFirstName()) 
+				&& p.getLastName().equals(personDTO.getLastName())).findFirst();
 		
+		if(!existingPerson.isPresent()) {
+			logger.warn("Person not found: {} {}",personDTO.getFirstName(), personDTO.getLastName() );
+			return;
+		}
+		
+		//Remove the old version of the person we tried to update
+		persons.remove(existingPerson.get());
+		
+		//Add new info to update the person
 		persons.add(convertToEntity(personDTO));
 		
+		//Saving update
 		personRepository.saveAllPersons(persons);
 		
 		logger.debug("Person updated successfully: {} ", personDTO);
@@ -87,10 +111,16 @@ public class PersonServiceImpl implements PersonService {
 		
 		logger.debug("Deleting person from repository with firstName: {} and lastName: {}", firstName, lastName);
 		
-		persons.removeIf(p ->p.getFirstName().equals(firstName)
+		//Checking if the person exists in JSON file
+		boolean personExists = persons.removeIf(p ->p.getFirstName().equals(firstName)
 				&& p.getLastName().equals(lastName));
-		personRepository.saveAllPersons(persons);
-		logger.debug("Person deleted successfully with firstName: {} and lastName: {}", firstName, lastName);		
+		
+		if (personExists) {
+			personRepository.saveAllPersons(persons);
+			logger.debug("Person deleted successfully with firstName: {} and lastName: {}", firstName, lastName);	
+		} else {
+			logger.warn("Person not found with firstName: {} and lastName: {}", firstName, lastName);
+		}
 		
 	}
 	

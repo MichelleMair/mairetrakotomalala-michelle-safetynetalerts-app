@@ -85,10 +85,16 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	
 		logger.debug("Deleting medical records from repository with firstName: {} and lastName: {}", firstName, lastName);
 	
-		medicalrecords.removeIf(m ->m.getFirstName().equals(firstName)
-				&& m.getLastName().equals(lastName));
-		medicalRecordRepository.saveAllMedicalRecords(medicalrecords);
-		logger.debug("Medical record deleted successfully with firstName: {} and lastName: {}", firstName, lastName);
+		boolean recordExists = medicalrecords.removeIf(m ->m.getFirstName().equals(firstName) && m.getLastName().equals(lastName));
+		
+		if (recordExists) {
+			medicalRecordRepository.saveAllMedicalRecords(medicalrecords);
+			logger.debug("Medical record deleted successfully with firstName: {} and lastName: {}", firstName, lastName);
+			
+		} else {
+			logger.warn("Medical Record not found with firstname: {} and lastName: {}", firstName, lastName);
+			
+		}
 	}
 	
 	private MedicalRecordDTO convertToDTO(MedicalRecord MedicalRecord) {

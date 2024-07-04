@@ -30,7 +30,7 @@ public class ChildAlertServiceImpl implements ChildAlertService {
 	private MedicalRecordRepository medicalRecordRepository;
 
 	@Override
-	public List<ChildAlertDTO> getChildrenByAdress(String address) {
+	public List<ChildAlertDTO> getChildrenByAddress(String address) {
 		
 		List<Person> personsAtSameAddress = personRepository.getAllPersons().stream()
 				.filter(person -> person.getAddress().equals(address))

@@ -2,6 +2,7 @@ package com.safetynetalerts.safetynet.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -87,7 +89,7 @@ public class FirestationServiceTest {
 	public void testUpdateFirestation() {
 		//ARRANGE
 		FirestationDTO firestationDTO = new FirestationDTO();
-		firestationDTO.setAddress("1509 Culver St");
+		firestationDTO.setAddress("29 15th St");
 		firestationDTO.setStation("1");
 		
 		List<Firestation> firestations = new ArrayList<>();
@@ -99,7 +101,32 @@ public class FirestationServiceTest {
 		firestationService.updateFirestation(firestationDTO);
 		
 		//ASSERT
-		verify(firestationRepository, times(1)).saveAllFirestations(anyList());
+		ArgumentCaptor<List<Firestation>> captor = ArgumentCaptor.forClass(List.class);
+		verify(firestationRepository, times(1)).saveAllFirestations(captor.capture());
+		
+		List<Firestation> updatedFirestations = captor.getValue();
+		assertEquals(1, updatedFirestations.size());
+		assertEquals("1", updatedFirestations.get(0).getStation());
+	}
+	
+	
+	@Test
+	public void testUpdateNonExistingFirestation() {
+		//ARRANGE
+		FirestationDTO firestationDTO = new FirestationDTO();
+		firestationDTO.setAddress("1509 NonExistingAddress St");
+		firestationDTO.setStation("1");
+		
+		List<Firestation> firestations = new ArrayList<>();
+		firestations.add(new Firestation("29 15th St", "4"));
+		
+		when(firestationRepository.getAllFirestations()).thenReturn(firestations);
+		
+		//ACT
+		firestationService.updateFirestation(firestationDTO);
+		
+		//ASERT
+		verify(firestationRepository, never()).saveAllFirestations(anyList());
 	}
 	
 	
@@ -118,9 +145,33 @@ public class FirestationServiceTest {
 		firestationService.deleteFirestation(address);
 		
 		//ASSERT
-		verify(firestationRepository, times(1)).saveAllFirestations(anyList());
+		ArgumentCaptor<List<Firestation>> captor = ArgumentCaptor.forClass(List.class);
+		verify(firestationRepository, times(1)).saveAllFirestations(captor.capture());
 		
+		List<Firestation> updatedFirestations = captor.getValue();
+		assertEquals(1, updatedFirestations.size());
+		assertEquals("947 E. Rose Dr", updatedFirestations.get(0).getAddress());
 	}
+	
+	
+	@Test
+	public void testDeleteNonExistingFirestation() {
+		//ARRANGE
+		String address = "1234 NonExisting Ad";
+		
+		List<Firestation> firestations = new ArrayList<>();
+		firestations.add(new Firestation("748 Townings Dr", "3"));
+		firestations.add(new Firestation("947 E. Rose Dr", "1"));
+		
+		when(firestationRepository.getAllFirestations()).thenReturn(firestations);
+		
+		//ACT
+		firestationService.deleteFirestation(address);
+		
+		//ASSERT
+		verify(firestationRepository, never()).saveAllFirestations(anyList());
+	}
+	
 	
 	@Test
 	public void testGetCoverageByStationNumber() {

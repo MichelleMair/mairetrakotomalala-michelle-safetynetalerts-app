@@ -6,5 +6,5 @@ import com.safetynetalerts.safetynet.dto.ChildAlertDTO;
 
 public interface ChildAlertService {
 
-	List<ChildAlertDTO> getChildrenByAdress(String address);
+	List<ChildAlertDTO> getChildrenByAddress(String address);
 }

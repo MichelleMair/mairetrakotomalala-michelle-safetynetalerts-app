@@ -32,7 +32,7 @@ public class MedicalRecordController {
 	private MedicalRecordService medicalRecordService;
 	
 	/**
-	 * Method GET (CRUD)
+	 * 
 	 * @return if status ok (200), get a list of medical records
 	 */
 	@GetMapping
@@ -52,7 +52,7 @@ public class MedicalRecordController {
 	}
 	
 	/**
-	 * Method POST (CRUD)
+	 * 
 	 * @param medicalRecordDTO
 	 * @return if status ok, add medical records
 	 */
@@ -72,7 +72,7 @@ public class MedicalRecordController {
 	}
 	
 	/**
-	 * Method PUT (CRUD)
+	 * 
 	 * @param medicalRecordDTO
 	 * @return if status ok, updated medical record successfully
 	 */
@@ -92,7 +92,7 @@ public class MedicalRecordController {
 	}
 	
 	/**
-	 * Method DELETE (CRUD)
+	 *
 	 * @param firstName
 	 * @param lastName
 	 * @return delete medical records (Http 200)

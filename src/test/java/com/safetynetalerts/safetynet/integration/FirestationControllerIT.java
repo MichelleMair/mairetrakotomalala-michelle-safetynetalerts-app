@@ -38,6 +38,17 @@ public class FirestationControllerIT {
 	private FirestationService firestationService;
 	
 	
+	/**
+	 * Tests the GET endpoint for retrieving all firestations 
+	 * 
+	 * This test verifies that the "/firestation" endpoint returns a list of firestations
+	 * with the correct status code, content type, and JSON structure
+	 * 
+	 * The test mock the response from the firestation service to ensure the endpoint 
+	 * correctly handles the response
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testGetAllFirestations() throws Exception {
 		List<FirestationDTO> firestations = new ArrayList<>();

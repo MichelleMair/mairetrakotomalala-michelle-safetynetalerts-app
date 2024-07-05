@@ -22,6 +22,13 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
 	@Autowired
 	private PersonRepository personRepository;
 	
+	/**
+	 *Retrieves a list of phone numbers for all persons covered by a specific fire station
+	 *
+	 *@param stationNumber (the number of the firestation to search for covered persons)
+	 *@return a list of distinct phone numbers of persons covered by the specified firestation 
+	 *
+	 */
 	@Override
 	public List<String> getPhoneNumbersByFirestation(int stationNumber) {
 		List<String> coveredAddresses = firestationRepository.getAllFirestations().stream()

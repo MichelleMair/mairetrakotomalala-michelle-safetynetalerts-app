@@ -113,7 +113,11 @@ public class FirestationServiceImpl implements FirestationService {
 	
 
 	/**
-	 * getting a list of persons covered by the corresponding firestation
+	 * Retrieves the coverage information for a given firestation number
+	 *
+	 * @param stationNumber the fire station number for which the coverage information is to be retrieved
+	 * @return a {@link FirestationCoverageDTO} object containing the coverage information
+	 *
 	 */
 	@Override
 	public FirestationCoverageDTO getCoverageByStationNumber(int stationNumber) {

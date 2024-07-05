@@ -29,6 +29,14 @@ public class ChildAlertServiceImpl implements ChildAlertService {
 	@Autowired
 	private MedicalRecordRepository medicalRecordRepository;
 
+	/**
+	 * Retrieves a list of children living at a specific address along with their household members
+	 * A child is defined as person who is 18 years old or younger.
+	 * 
+	 *  @param address (the address to search for children)
+	 *  @return a list of ChildAlertDTO objects, each representing a child ad their household members
+	 *  
+	 */
 	@Override
 	public List<ChildAlertDTO> getChildrenByAddress(String address) {
 		

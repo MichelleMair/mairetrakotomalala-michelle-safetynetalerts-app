@@ -18,9 +18,16 @@ import com.safetynetalerts.safetynet.model.Person;
 import java.io.File;
 
 /**
- * In charge of reading and writing JSON objects from a file Using Jackson for
- * serialization and deserialization Convert object to json Convert json to
- * object
+ * Implementation of the PersonRepository interface
+ * This class manages the persistence of person data using a JSON file
+ * 
+ * It provides methods to load, retrieve and save person data from/to JSON file
+ * The data is initially loaded from the file specified by DATA_FILEPATH
+ * 
+ * This class is in charge of reading and writing JSON objects from a file using Jackson for
+ * serialization and deserialization 
+ * Convert object to json 
+ * Convert json to object
  */
 
 @Repository

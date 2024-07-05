@@ -173,6 +173,13 @@ public class FirestationServiceTest {
 	}
 	
 	
+	/**
+	 * Tests the getCoverageByStationNumber method of the FirestationService
+	 * 
+	 * This test verifies that the method correctly retrieves and processes the coverage information
+	 * for a given firestation number, including the number of adults and children
+	 * 
+	 */
 	@Test
 	public void testGetCoverageByStationNumber() {
 		//ARRANGE

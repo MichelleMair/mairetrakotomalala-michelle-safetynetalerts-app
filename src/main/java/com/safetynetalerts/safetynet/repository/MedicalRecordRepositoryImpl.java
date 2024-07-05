@@ -17,6 +17,13 @@ import com.safetynetalerts.safetynet.model.MedicalRecord;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Implementation of the MedicalRecordRepository interface
+ * This class manages the persistence of Medical record data using a JSON file
+ * 
+ * It provides methods to load, retrieve and save medical record data from/to JSON file
+ * The data is initially loaded from the file specified by DATA_FILEPATH
+ */
 @Repository
 public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
 	

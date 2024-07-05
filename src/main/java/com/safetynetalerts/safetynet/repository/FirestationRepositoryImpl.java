@@ -16,6 +16,14 @@ import com.safetynetalerts.safetynet.model.Firestation;
 
 import java.io.File;
 
+/**
+ * Implementation of the FirestationRepository interface
+ * This class manages the persistence of Firestation data using a JSON file
+ * 
+ * It provides methods to load, retrieve and save firestation data from/to JSON file
+ * The data is initially loaded from the file specified by DATA_FILEPATH
+ * 
+ */
 @Repository
 public class FirestationRepositoryImpl implements FirestationRepository {
 	

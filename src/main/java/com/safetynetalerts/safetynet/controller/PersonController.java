@@ -31,7 +31,6 @@ public class PersonController {
 	private PersonService personService;
 	
 	/**
-	 * Method GET (CRUD)
 	 * @return Response HTTP 200 (ok) list of persons if no error
 	 */
 	@GetMapping
@@ -54,7 +53,7 @@ public class PersonController {
 	
 	
 	/**
-	 * Method POST (CRUD)
+	 * 
 	 * @param personDTO
 	 * @return add person (HTTP 200)
 	 */
@@ -75,7 +74,7 @@ public class PersonController {
 	
 	
 	/**
-	 * Method PUT (CRUD)
+	 * 
 	 * @param personDTO
 	 * @return update info about a person (Response HTTP 200)
 	 */
@@ -95,7 +94,7 @@ public class PersonController {
 	}
 	
 	/**
-	 * Method DELETE (CRUD)
+	 * 
 	 * @param firstName
 	 * @param lastName
 	 * @return delete a person (Response HTTP 200)

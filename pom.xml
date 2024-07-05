@@ -173,7 +173,19 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>			
+            </plugin>
+            <!--Javadoc maven plugin for javadoc -->
+            <plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-javadoc-plugin</artifactId>
+            	<executions>
+                	<execution>
+                    	<goals>
+                        	<goal>javadoc</goal>
+                    	</goals>
+                	</execution>
+            	</executions>
+        	</plugin>			
 		</plugins>
 	</build>
 </project>

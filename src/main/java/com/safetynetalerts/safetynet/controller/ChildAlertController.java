@@ -19,6 +19,10 @@ public class ChildAlertController {
 	@Autowired
 	private ChildAlertService childAlertService;
 	
+	/**
+	 * @param address
+	 * @return a responseEntity containing a list of ChildAlertDTO objects
+	 */
 	@GetMapping
 	public ResponseEntity<List<ChildAlertDTO>> getChildrenByAddress(@RequestParam("address") String address) {
 		List<ChildAlertDTO> children = childAlertService.getChildrenByAddress(address);

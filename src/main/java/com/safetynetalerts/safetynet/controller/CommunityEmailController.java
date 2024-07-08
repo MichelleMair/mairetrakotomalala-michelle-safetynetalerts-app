@@ -16,6 +16,10 @@ public class CommunityEmailController {
 	@Autowired
 	private CommunityEmailService communityEmailService;
 	
+	/**
+	 * @param city
+	 * @return a ResponseEntity containing a list of mails retrieves by city 
+	 */
 	@GetMapping("/communityEmail")
 	public ResponseEntity<List<String>> getEmailsByCity (@RequestParam("city") String city) {
 		List<String> emails = communityEmailService.getEmailsByCity(city);

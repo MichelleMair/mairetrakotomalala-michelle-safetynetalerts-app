@@ -32,7 +32,7 @@ public class FirestationController {
 	private FirestationService firestationService;
 	
 	/**
-	 * Metho GET
+	 * 
 	 * @return Status ok (200) if no exception (fetching all firestations)
 	 */
 	@GetMapping

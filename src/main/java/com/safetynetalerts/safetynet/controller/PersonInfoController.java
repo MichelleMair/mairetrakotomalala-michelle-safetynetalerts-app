@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.safetynetalerts.safetynet.dto.PersonInfoDTO;
 import com.safetynetalerts.safetynet.service.PersonInfoService;
 
+/**
+ * Controller class to handle requests related to person information by last name
+ */
 @RestController
 @RequestMapping("/personInfolastName")
 public class PersonInfoController {
@@ -20,6 +23,11 @@ public class PersonInfoController {
 	private PersonInfoService personInfoService;
 	
 	
+	/**
+	 * HHTP GET requests
+	 * @param lastName the lastName of the person to fetch information for
+	 * @return a ResponseEntity containing a list of personINfoDTO objects
+	 */
 	@GetMapping(params = "lastName")
 	public ResponseEntity<List<PersonInfoDTO>> getPersonsInfoByLastName(@RequestParam("lastName") String lastName) {
 		List<PersonInfoDTO> personsInfo= personInfoService.getPersonsInfoByLastName(lastName);

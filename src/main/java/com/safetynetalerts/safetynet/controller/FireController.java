@@ -19,6 +19,10 @@ public class FireController {
 	@Autowired
 	private FireService fireService;
 	
+	/**
+	 * @param address
+	 * @return a responseEntity containing a list of persons
+	 */
 	@GetMapping(params = "address")
 	public ResponseEntity<List<FireDTO>> getPersonsByAddress(@RequestParam("address") String address){
 		List<FireDTO> persons = fireService.getPersonsByAddress(address);

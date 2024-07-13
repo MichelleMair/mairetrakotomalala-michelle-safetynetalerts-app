@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
 	private LoggingInterceptor loggingInterceptor;
 	
 	/**
-	 * Adds hte LoggingInterceptor to intercept requests to specified URL patterns. 
+	 * Adds the LoggingInterceptor to intercept requests to specified URL patterns. 
 	 * 
 	 * @param registry : the registry to add the interceptor to 
 	 */

@@ -60,9 +60,16 @@ public class FirestationRepositoryImpl implements FirestationRepository {
 	public void saveAllFirestations(List<Firestation> firestations) {
 		this.firestations = firestations;
 		try {
-			JsonNode rootNode = objectMapper.createObjectNode();
+			
+			//Read existing json file
+			JsonNode rootNode = objectMapper.readTree(new File(DATA_FILEPATH));
+			
+			//Update the section firestations
 			((ObjectNode) rootNode).putPOJO("firestations", firestations);
+			
+			//Write all sections in json file
 			objectMapper.writeValue(new File(DATA_FILEPATH), rootNode);
+			
 		} catch (IOException e) {
 			logger.error("Failed to save firestations data to json file: {}", DATA_FILEPATH, e);
 		}

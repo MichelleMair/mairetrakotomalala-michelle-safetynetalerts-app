@@ -77,7 +77,7 @@ public class PersonServiceTest {
 		personService.addPerson(personDTO);
 		
 		//ASSERT
-		verify(personRepository, times(1)).saveAllPersons(anyList());;
+		verify(personRepository, times(1)).saveAllPersons(anyList());
 	}
 	
 	@Test

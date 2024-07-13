@@ -62,9 +62,16 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
 	public void saveAllMedicalRecords(List<MedicalRecord> medicalrecords) {
 		this.medicalrecords = medicalrecords;
 		try {
-			JsonNode rootNode = objectMapper.createObjectNode();
+			
+			//Read existing Json file
+			JsonNode rootNode = objectMapper.readTree(new File(DATA_FILEPATH));
+			
+			//Update section medicalRecords
 			((ObjectNode) rootNode).putPOJO("medicalrecords", medicalrecords);
+			
+			//Write all sections in json file
 			objectMapper.writeValue(new File(DATA_FILEPATH), rootNode);
+			
 		} catch (IOException e) {
 			logger.error("Failed to save medical records to json file: {}", DATA_FILEPATH, e);
 		}

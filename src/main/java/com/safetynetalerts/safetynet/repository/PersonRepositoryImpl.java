@@ -68,9 +68,15 @@ public class PersonRepositoryImpl implements PersonRepository {
 	public void saveAllPersons(List<Person> persons) {
 		this.persons = persons;
 		try {
-			JsonNode rootNode = objectMapper.createObjectNode();
+			//Read json existing json file
+			JsonNode rootNode = objectMapper.readTree(new File(DATA_FILEPATH));
+			
+			//Update the section "persons"
 			((ObjectNode) rootNode).putPOJO("persons", persons);
+			
+			//Write all sections 
 			objectMapper.writeValue(new File(DATA_FILEPATH), rootNode);
+			
 		} catch (IOException e) {
 			logger.error("Failed to save person data to json file: {}", DATA_FILEPATH, e);
 		}

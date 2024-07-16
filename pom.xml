@@ -167,10 +167,19 @@
                     </execution>
                     <execution>
                         <id>jacoco-report</id>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+							<excludes>
+								<exclude>com/safetynetalerts/safetynet/config/**</exclude>
+								<exclude>com/safetynetalerts/safetynet/dto/**</exclude>
+								<exclude>com/safetynetalerts/safetynet/exception/**</exclude>
+								<exclude>com/safetynetalerts/safetynet/interceptor/**</exclude>
+								<exclude>com/safetynetalerts/safetynet/model/**</exclude>
+							</excludes>
+						</configuration>
                     </execution>
                 </executions>
             </plugin>

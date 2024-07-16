@@ -1,6 +1,7 @@
 package com.safetynetalerts.safetynet.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -124,11 +125,17 @@ public class MedicalRecordServiceTest {
 		
 		when(medicalRecordRepository.getAllMedicalRecords()).thenReturn(medicalRecords);
 		
-		//ACT
-		medicalRecordService.updatePerson(medicalRecordDTO);
+		//ACT & ASSERT
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+			medicalRecordService.updatePerson(medicalRecordDTO);
+		});
 		
-		//ASSERT
-		verify(medicalRecordRepository, times(1)).saveAllMedicalRecords(anyList());
+		//ADDITIONNAL ASSERT
+		assertEquals("Medical record not found", exception.getMessage());
+		
+		//VERIFY NO INTERACTIONS WITH SAVEALLMEDICALRECORDS
+		verify(medicalRecordRepository, times(1)).getAllMedicalRecords();
+		verify(medicalRecordRepository, times(0)).saveAllMedicalRecords(anyList());
 	}
 	
 	@Test

@@ -1,5 +1,7 @@
 package com.safetynetalerts.safetynet.integration;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -78,6 +80,63 @@ public class PersonControllerIT {
 				.param("firstName", "John")
 				.param("lastName", "Doe"))
 		.andExpect(status().isOk());
+	}
+	
+	
+	@Test
+	public void testAddPersonThrowsException() throws Exception {
+		PersonDTO personDTO = new PersonDTO("John","Doe","1234 street Ad","City","56789","123-456-7890","jdoe@email.com");
+		doThrow(new RuntimeException("Unexpected error")).when(personService).addPerson(personDTO);
+		
+		mockMvc.perform(post("/person")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(personDTO)))
+		.andExpect(status().isInternalServerError());
+	}
+	
+	@Test
+	public void testUpdatePersonThrowsException() throws Exception {
+		PersonDTO personDTO = new PersonDTO("John","Doe","1234 street Ad","City","56789","123-456-7890","jdoe@email.com");
+	
+		doThrow(new RuntimeException("Unexpected error")).when(personService).updatePerson(personDTO);
+		
+
+		mockMvc.perform(put("/person")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(personDTO)))
+		.andExpect(status().isInternalServerError());
+	}
+	
+	@Test
+	public void testDeletePersonThrowsException() throws Exception {
+		
+		doThrow(new RuntimeException("Unexpected error")).when(personService).deletePerson("John", "Doe");
+		
+		mockMvc.perform(delete("/person")
+				.param("firstName", "John")
+				.param("lastName", "Doe"))
+		.andExpect(status().isInternalServerError());
+	}
+	
+	@Test
+	public void testUpdatePersonWithMissingFields() throws Exception {
+		PersonDTO personDTO = new PersonDTO();
+		personDTO.setFirstName("");
+		personDTO.setLastName("Doe");
+		
+		mockMvc.perform(put("/person")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(personDTO)))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testDeletePersonWithMissingFields() throws Exception {
+		
+		mockMvc.perform(delete("/person")
+				.param("firstName", "")
+				.param("lastName", "Doe"))
+		.andExpect(status().isBadRequest());
 	}
 
 }

@@ -41,6 +41,10 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	 */
 	@Override
 	public void addMedicalRecord(MedicalRecordDTO medicalrecordDTO) {
+		if (medicalrecordDTO.getFirstName() == null || medicalrecordDTO.getLastName() == null) {
+			throw new IllegalArgumentException("First name and last name cannot be null");
+		}
+		
 		MedicalRecord medicalRecord = convertToEntity(medicalrecordDTO);
 		
 		logger.debug("Adding medical record to repository. ", medicalRecord);
@@ -59,9 +63,21 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	 */
 	@Override
 	public void updatePerson(MedicalRecordDTO medicalrecordDTO) {
+		
+		if (medicalrecordDTO.getFirstName() == null || medicalrecordDTO.getLastName() == null) {
+			throw new IllegalArgumentException("First name and last name cannot be null");
+		}
 		List<MedicalRecord> medicalrecords = medicalRecordRepository.getAllMedicalRecords();
 		
 		logger.debug("Updating medical record in repository: {}", medicalrecordDTO);
+		
+		boolean recordExists = medicalrecords.stream()
+				.anyMatch(m ->m.getFirstName().equals(medicalrecordDTO.getFirstName())
+				&& m.getLastName().equals(medicalrecordDTO.getLastName()));
+		
+		if (!recordExists) {
+			throw new IllegalArgumentException("Medical record not found");
+		}
 		
 		medicalrecords.removeIf(m ->m.getFirstName().equals(medicalrecordDTO.getFirstName())
 				&& m.getLastName().equals(medicalrecordDTO.getLastName()));

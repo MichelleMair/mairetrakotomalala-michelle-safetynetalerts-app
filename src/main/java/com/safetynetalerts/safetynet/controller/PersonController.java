@@ -5,14 +5,17 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.safetynetalerts.safetynet.dto.PersonDTO;
@@ -61,6 +64,14 @@ public class PersonController {
 	public ResponseEntity<Void> addPerson(@RequestBody PersonDTO personDTO) {
 		logger.debug("Adding person: {}", personDTO);
 		
+		if(
+			personDTO.getFirstName() == null || personDTO.getFirstName().isEmpty() ||
+			personDTO.getLastName() == null || personDTO.getLastName().isEmpty()
+			) {
+			logger.error("First name or last name is missing");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
 		try {
 			personService.addPerson(personDTO);
 			logger.info("Added person successfully. {}", personDTO);
@@ -68,7 +79,7 @@ public class PersonController {
 			
 		} catch (Exception e) {
 			logger.error("Error adding persons: ", personDTO ,e);
-			return ResponseEntity.status(500).build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 	
@@ -82,6 +93,14 @@ public class PersonController {
 	public ResponseEntity<Void> updatePerson(@RequestBody PersonDTO personDTO) {
 		logger.debug("Updating person: {}", personDTO);
 		
+		if(
+				personDTO.getFirstName() == null || personDTO.getFirstName().isEmpty() ||
+				personDTO.getLastName() == null || personDTO.getLastName().isEmpty()
+				) {
+				logger.error("First name or last name is missing");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			}
+		
 		try {
 			personService.updatePerson(personDTO);
 			logger.info("Updated person successfully: {}", personDTO);
@@ -89,7 +108,7 @@ public class PersonController {
 			
 		} catch (Exception e) {
 			logger.error("Error updating persons: ", personDTO ,e);
-			return ResponseEntity.status(500).build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 	
@@ -103,6 +122,13 @@ public class PersonController {
 	public ResponseEntity<Void> deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
 		logger.debug("Deleting person with firstName: {} and lastName: {}" , firstName, lastName);
 		
+		if(firstName == null || firstName.isEmpty() ||
+			lastName == null || lastName.isEmpty()
+			) {
+				logger.error("First name or last name is missing");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			}
+		
 		try {
 			personService.deletePerson(firstName, lastName);
 			logger.info("Deleted person successfully with firstName: {} and lastName: {}" , firstName, lastName);
@@ -110,8 +136,20 @@ public class PersonController {
 			
 		} catch (Exception e) {
 			logger.error("Error deleting person with firstName: {} and lastName: {}" , firstName, lastName, e);
-			return ResponseEntity.status(500).build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+		logger.error("Bad request: {}", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+	}
+	
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
+		logger.error("Internal server error: {}", e.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 	}
 
 }

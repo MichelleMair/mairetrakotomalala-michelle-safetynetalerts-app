@@ -58,6 +58,11 @@ public class FirestationServiceImpl implements FirestationService {
 	 */
 	@Override
 	public void addFirestation (FirestationDTO firestationDTO) {
+		
+		if (firestationDTO.getAddress() == null || firestationDTO.getStation() == null) {
+			throw new IllegalArgumentException("Address and station cannot be null");
+		}
+		
 		Firestation firestation = convertToEntity(firestationDTO);
 		logger.debug("Adding firestation to repository. ", firestation);
 		
@@ -73,22 +78,29 @@ public class FirestationServiceImpl implements FirestationService {
 	 */
 	@Override
 	public void updateFirestation(FirestationDTO firestationDTO) {
+		
+		if (firestationDTO.getAddress() == null || firestationDTO.getStation() == null) {
+			throw new IllegalArgumentException("Address and station cannot be null");
+		}
+		
 		List<Firestation> firestations = firestationRepository.getAllFirestations();
 		logger.debug("Updating firestation in repository: {}", firestationDTO);
 		
-		Optional<Firestation> existingFirestation = firestations.stream()
-				.filter(fs -> fs.getAddress().equals(firestationDTO.getAddress())).findFirst();
+		boolean stationExists = firestations.stream().anyMatch(f -> f.getAddress().equals(firestationDTO.getAddress()));		
 		
-		if(existingFirestation.isPresent()) {
-			
-			existingFirestation.get().setStation(firestationDTO.getStation());
-			
-			firestationRepository.saveAllFirestations(firestations);
-			logger.debug("Firestation updated successfully: {}", firestationDTO);
-			
-		} else {
-			logger.warn("Firestation not found with address: {}", firestationDTO.getAddress());
+		if(!stationExists) {
+			throw new IllegalArgumentException("Firestation not found");
 		}
+		
+		firestations.removeIf(f -> f.getAddress().equals(firestationDTO.getAddress()));
+
+		logger.warn("Firestation not found with address: {}", firestationDTO.getAddress());
+		
+		firestations.add(convertToEntity(firestationDTO));
+		
+		firestationRepository.saveAllFirestations(firestations);
+		logger.debug("Firestation updated successfully: {}", firestationDTO);
+
 		
 	}
 	

@@ -1,6 +1,7 @@
 package com.safetynetalerts.safetynet.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -122,10 +123,15 @@ public class FirestationServiceTest {
 		
 		when(firestationRepository.getAllFirestations()).thenReturn(firestations);
 		
-		//ACT
-		firestationService.updateFirestation(firestationDTO);
+		//ACT & ASSERT
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+			firestationService.updateFirestation(firestationDTO);
+		});
 		
-		//ASERT
+		//ASSERT
+		assertEquals("Firestation not found", exception.getMessage());
+		
+		//VERIFY NO SAVE OPERATION
 		verify(firestationRepository, never()).saveAllFirestations(anyList());
 	}
 	

@@ -115,13 +115,12 @@ public class PersonServiceImpl implements PersonService {
 		boolean personExists = persons.removeIf(p ->p.getFirstName().equals(firstName)
 				&& p.getLastName().equals(lastName));
 		
-		if (personExists) {
-			personRepository.saveAllPersons(persons);
-			logger.debug("Person deleted successfully with firstName: {} and lastName: {}", firstName, lastName);	
-		} else {
-			logger.warn("Person not found with firstName: {} and lastName: {}", firstName, lastName);
+		if (!personExists) {
+			throw new IllegalArgumentException("Person not found");
 		}
 		
+		personRepository.saveAllPersons(persons);
+		logger.debug("Person deleted successfully with firstName: {} and lastName: {}", firstName, lastName);			
 	}
 	
 	private PersonDTO convertToDTO(Person person) {

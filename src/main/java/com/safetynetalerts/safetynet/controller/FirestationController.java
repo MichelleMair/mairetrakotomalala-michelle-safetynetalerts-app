@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,6 +78,13 @@ public class FirestationController {
 	public ResponseEntity<Void> addFirestation(@RequestBody FirestationDTO firestationDTO) {
 		logger.debug("Adding a firestation: {}", firestationDTO);
 		
+		if(firestationDTO.getAddress() == null || firestationDTO.getAddress().isEmpty() ||
+			firestationDTO.getStation() == null || firestationDTO.getStation().isEmpty()
+		) {
+				logger.error("Address or station is missing");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
 		try {
 			firestationService.addFirestation(firestationDTO);
 			logger.info("Added firestation successfully: {}", firestationDTO);
@@ -84,7 +92,7 @@ public class FirestationController {
 			
 		} catch (Exception e) {
 			logger.error("Error adding a firestation: ", firestationDTO, e);
-			return ResponseEntity.status(500).build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 	
@@ -97,6 +105,13 @@ public class FirestationController {
 	public ResponseEntity<Void> updateFirestation (@RequestBody FirestationDTO firestationDTO) {
 		logger.debug("Updating a firestation: {}", firestationDTO);
 		
+		if(firestationDTO.getAddress() == null || firestationDTO.getAddress().isEmpty() ||
+		   firestationDTO.getStation() == null || firestationDTO.getStation().isEmpty()
+		) {
+			logger.error("Address or station is missing");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
 		try {
 			firestationService.updateFirestation(firestationDTO);
 			logger.info("Updated firestation successfully: {}", firestationDTO);
@@ -104,7 +119,7 @@ public class FirestationController {
 			
 		} catch (Exception e) {
 			logger.error("Error updating firestation: ", firestationDTO ,e);
-			return ResponseEntity.status(500).build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 	
@@ -113,8 +128,13 @@ public class FirestationController {
 	 * @return if status ok, deleted a firestation successfully
 	 */
 	@DeleteMapping
-	public ResponseEntity<Void> deleteFirestation(@RequestBody String address) {
+	public ResponseEntity<Void> deleteFirestation(@RequestParam(required =false) String address) {
 		logger.debug("Deleting a firestation: {}", address);
+		
+		if(address == null || address.isEmpty()) {
+			logger.error("Address is missing");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
 		
 		try {
 			firestationService.deleteFirestation(address);
@@ -122,8 +142,8 @@ public class FirestationController {
 			return ResponseEntity.ok().build();
 			
 		} catch (Exception e) {
-			logger.error("Deleted firestation successfully with address: {}", address);
-			return ResponseEntity.ok().build();
+			logger.error("Deleted firestation successfully with address: {}", address, e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 }

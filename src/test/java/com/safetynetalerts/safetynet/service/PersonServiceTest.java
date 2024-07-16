@@ -176,16 +176,15 @@ public class PersonServiceTest {
 	@Test
 	public void testDeleteNonExistingPerson() {
 		//ARRANGE
-		String firstName = "Elizabeth";
-		String lastName = "Olsen";
+		List<Person> persons = new ArrayList<>();
+		when(personRepository.getAllPersons()).thenReturn(persons);
 		
-		when(personRepository.getAllPersons()).thenReturn(new ArrayList<>());
-		
-		//ACT
-		personService.deletePerson(firstName, lastName);
-		
-		//ASSERT
-		verify(personRepository, never()).saveAllPersons(anyList());
+		//ACT & ASSERT
+		IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> { 
+			personService.deletePerson("NonExistent", "PersonName");
+		});
+
+		assertEquals("Person not found", thrown.getMessage());
 	}
 	
 }
